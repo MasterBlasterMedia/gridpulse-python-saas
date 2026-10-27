@@ -56,4 +56,4 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Parse environment once; dependencies can override this in isolated tests."""
     # BaseSettings resolves required fields from the environment rather than call arguments.
-    return Settings()  # type: ignore[call-arg]
+    return Settings()
