@@ -50,7 +50,7 @@ jobs:
           python -m app.seed
           python -m app.seed
       - run: pytest --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=80
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: backend-coverage
           path: backend/coverage.xml
@@ -74,7 +74,7 @@ jobs:
         env:
           VITE_BASE_PATH: /gridpulse-python-saas/
           VITE_API_URL: ${{ vars.VITE_API_URL }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: frontend-build
           path: frontend/dist
@@ -117,7 +117,7 @@ jobs:
       - run: npm run test:e2e
         working-directory: frontend
         env: {E2E_BASE_URL: 'http://127.0.0.1:8080'}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: browser-test-results
