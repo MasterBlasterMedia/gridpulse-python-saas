@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gridpulse-api"
+version = "1.0.0"
+description = "Synthetic energy operations and transparent statistical analytics"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1", "pydantic-settings>=2.8,<3",
+  "sqlalchemy[asyncio]>=2.0.38,<2.1", "asyncpg>=0.30,<1", "alembic>=1.15,<2",
+  "PyJWT>=2.10,<3", "pwdlib[argon2]>=0.2,<1", "email-validator>=2.2,<3"
+]
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10", "pytest-asyncio>=1,<2", "pytest-cov>=6,<8", "httpx>=0.28,<1", "aiosqlite>=0.21,<1", "ruff>=0.11,<1", "mypy>=1.15,<2", "pip-audit>=2.9,<3"]
+[tool.setuptools.packages.find]
+include = ["app*"]
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+ignore = ["E501"]
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/seed.py"]
+# SQLAlchemy bridges async I/O through greenlets; both execution contexts must be traced.
+concurrency = ["greenlet", "thread"]
+[tool.coverage.report]
+show_missing = true

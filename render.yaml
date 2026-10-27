@@ -1,0 +1,27 @@
+# Free API only. Supply an existing free Neon PostgreSQL URL in Render's secret settings.
+# This blueprint deliberately creates no paid database, disk, or autoscaling resource.
+services:
+  - type: web
+    name: gridpulse-api
+    runtime: docker
+    plan: free
+    region: ohio
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health/ready
+    autoDeployTrigger: off
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: CORS_ORIGINS
+        value: '["https://masterblastermedia.github.io"]'
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: SEED_DEMO
+        value: "true"
+      - key: PORT
+        value: "8000"

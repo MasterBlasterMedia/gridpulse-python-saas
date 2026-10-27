@@ -1,0 +1,9 @@
+output "ecr_repository_url" { value = aws_ecr_repository.api.repository_url }
+output "api_load_balancer_dns" { value = aws_lb.api.dns_name }
+output "database_endpoint" { value = aws_db_instance.main.address }
+output "database_master_secret_arn" { value = aws_db_instance.main.master_user_secret[0].secret_arn }
+output "runtime_secret_arn" { value = aws_secretsmanager_secret.api.arn }
+output "github_deploy_role_arn" { value = aws_iam_role.github_deploy.arn }
+output "task_definition_arn" { value = aws_ecs_task_definition.api.arn }
+output "release_subnets" { value = aws_subnet.public[*].id }
+output "release_security_group" { value = aws_security_group.api.id }

@@ -1,0 +1,47 @@
+name: gridpulse
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    environment:
+      POSTGRES_DB: gridpulse
+      POSTGRES_USER: gridpulse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run python3 scripts/configure_local.py first}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U gridpulse -d gridpulse"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    # Host access is loopback-only; API containers use the private Compose network.
+    ports: ["127.0.0.1:5433:5432"]
+  migrate:
+    build:
+      context: ./backend
+      target: production
+    environment: &api-environment
+      DATABASE_URL: postgresql+asyncpg://gridpulse:${POSTGRES_PASSWORD}@db:5432/gridpulse
+      JWT_SECRET: ${JWT_SECRET:?Run python3 scripts/configure_local.py first}
+      CORS_ORIGINS: '["http://localhost:8080","http://127.0.0.1:8080","http://localhost:5173","http://127.0.0.1:5173"]'
+    command: [sh, -c, "alembic upgrade head && python -m app.seed"]
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    build:
+      context: ./backend
+      target: production
+    environment: *api-environment
+    ports: ["127.0.0.1:8001:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+  web:
+    build:
+      context: ./frontend
+      target: production
+      args:
+        VITE_API_URL: ""
+    ports: ["127.0.0.1:8080:80"]
+    depends_on: [api]
+    restart: unless-stopped
+volumes:
+  postgres-data:

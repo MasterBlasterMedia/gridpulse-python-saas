@@ -1,0 +1,47 @@
+name: Approved AWS deployment
+on:
+  workflow_dispatch:
+    inputs:
+      verified_sha:
+        description: 'Full main-branch commit SHA with a successful Verify and publish run'
+        required: true
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+jobs:
+  deploy:
+    # Configure required reviewers and AWS variables only after infrastructure cost approval.
+    if: vars.AWS_DEPLOY_ENABLED == 'true'
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: {ref: '${{ inputs.verified_sha }}'}
+      - name: Require successful checks on the exact requested revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ inputs.verified_sha }}
+        run: |
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]
+          count=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$SHA&status=success&branch=main" --jq '.total_count')
+          test "$count" -gt 0
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - name: Build an immutable release image
+        env:
+          ECR_URL: ${{ vars.ECR_REPOSITORY_URL }}
+          SHA: ${{ inputs.verified_sha }}
+        run: |
+          docker build -t "$ECR_URL:$SHA" backend
+          docker push "$ECR_URL:$SHA"
+          digest=$(aws ecr describe-images --repository-name gridpulse-api --image-ids imageTag="$SHA" --query 'imageDetails[0].imageDigest' --output text)
+          echo "RELEASE_IMAGE=$ECR_URL@$digest" >> "$GITHUB_ENV"
+      - name: Migrate, deploy, and wait for steady state
+        env:
+          ECS_SUBNETS: ${{ vars.ECS_SUBNETS }}
+          ECS_SECURITY_GROUP: ${{ vars.ECS_SECURITY_GROUP }}
+        run: python3 scripts/deploy_ecs.py
