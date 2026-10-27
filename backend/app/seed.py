@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.config import get_settings
+from app.database import connection_options
 from app.models import EnergyReading, Facility, Incident, IncidentFacility, Organization, User
 from app.security import password_hasher
 
@@ -153,7 +154,8 @@ async def main() -> None:
         "--admin", action="store_true", help="Read GRIDPULSE_ADMIN_EMAIL/PASSWORD from environment"
     )
     args = parser.parse_args()
-    engine = create_async_engine(get_settings().database_url)
+    url = get_settings().database_url
+    engine = create_async_engine(url, connect_args=connection_options(url))
     try:
         async with async_sessionmaker(engine, expire_on_commit=False)() as session:
             created = await seed_demo(session, datetime.fromisoformat(args.end).replace(tzinfo=UTC))

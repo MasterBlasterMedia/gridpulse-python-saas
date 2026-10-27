@@ -6,8 +6,8 @@ Measured on **2026-10-27**, using Python 3.12.14, Node 24.22.1, PostgreSQL 18.6,
 
 | Check | Observed result |
 | --- | --- |
-| Backend Pytest / HTTPX with real PostgreSQL | **63 passed** |
-| Backend line coverage | **97.31%** across the measured app modules |
+| Backend Pytest / HTTPX with real PostgreSQL | **64 passed** |
+| Backend line coverage | **97.35%** across the measured app modules |
 | Statistical algorithm module | **100%** line coverage |
 | Operations service | **98%** line coverage |
 | Ruff check and format | Pass |
@@ -22,6 +22,7 @@ Measured on **2026-10-27**, using Python 3.12.14, Node 24.22.1, PostgreSQL 18.6,
 | Alembic upgrade and model drift | Applied successfully; no new upgrade operations |
 | Terraform init/validate | Pass, Terraform 1.17.0; no AWS resources created |
 | Local container builds | API, migration, and frontend images build |
+| GitHub Docker Compose integration | Pass: migrations, PostgreSQL, API, frontend, and all four browser tests |
 | Local Compose runtime | Blocked by host Podman missing `pasta` / `aardvark-dns`; Docker CI is the authoritative Compose runtime check |
 
 The later GitHub CI run and live deployment checks are recorded in [deployment.md](deployment.md). Dependency audits are a point-in-time advisory check, not proof of absence of vulnerabilities.
@@ -29,6 +30,7 @@ The later GitHub CI run and live deployment checks are recorded in [deployment.m
 ## Meaningful assertions
 
 - Moving averages and EWMA have hand-computed expected results. A constant trace has zero holdout error; a step-change holdout proves its values did not leak into fitting.
+- Hosted PostgreSQL TLS uses system trust roots with certificate and hostname checks; a regression test verifies the SSL context.
 - Forecasts reject insufficient, nonfinite, negative, and missing/nonconsecutive history. MAE and RMSE use the final 24 observations at a frozen prediction origin.
 - Anomaly tests include flat traces, a known spike, zero variance, thresholds, short history, invalid/missing readings, and warmup before a short selected range.
 - Priority tests cover severity, reach, customers, age, contribution caps, stable ties, and top-k behavior.

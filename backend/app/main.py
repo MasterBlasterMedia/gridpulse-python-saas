@@ -19,6 +19,7 @@ from starlette.responses import JSONResponse
 
 from app.api.routes import router
 from app.config import Settings, get_settings
+from app.database import connection_options
 
 logger = logging.getLogger("gridpulse")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -53,7 +54,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         # Migrations run as a release step, never as concurrent web-worker startup writes.
-        engine = create_async_engine(settings.database_url, pool_pre_ping=True)
+        engine = create_async_engine(
+            settings.database_url,
+            pool_pre_ping=True,
+            connect_args=connection_options(settings.database_url),
+        )
         app.state.sessions = async_sessionmaker(engine, expire_on_commit=False)
         yield
         await engine.dispose()

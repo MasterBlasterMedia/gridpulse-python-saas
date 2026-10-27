@@ -7,6 +7,7 @@ from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import get_settings
+from app.database import connection_options
 from app.models import Base
 
 
@@ -19,7 +20,8 @@ def migrate(connection: Connection) -> None:
 
 async def online() -> None:
     """Avoid pooling for a short-lived migration process."""
-    engine = create_async_engine(get_settings().database_url, poolclass=pool.NullPool)
+    url = get_settings().database_url
+    engine = create_async_engine(url, poolclass=pool.NullPool, connect_args=connection_options(url))
     async with engine.connect() as connection:
         await connection.run_sync(migrate)
     await engine.dispose()
