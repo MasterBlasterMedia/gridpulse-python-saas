@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
       # Validation has no AWS credentials and cannot create resources.
       - run: terraform fmt -check -recursive
         working-directory: infra/aws
