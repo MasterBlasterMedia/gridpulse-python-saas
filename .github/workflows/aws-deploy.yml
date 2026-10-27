@@ -26,7 +26,7 @@ jobs:
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]
           count=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$SHA&status=success&branch=main" --jq '.total_count')
           test "$count" -gt 0
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
