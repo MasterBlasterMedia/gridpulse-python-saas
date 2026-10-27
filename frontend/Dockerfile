@@ -1,4 +1,4 @@
-FROM docker.io/library/node:24-alpine AS dependencies
+FROM docker.io/library/node:26-alpine AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
