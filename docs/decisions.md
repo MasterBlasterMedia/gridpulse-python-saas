@@ -21,6 +21,7 @@
 - **One-day anomaly views:** a selected period cannot supply its own prior 24-hour baseline at its beginning. Queries now warm up the detector with prior data, filter flags back to the requested period, and include a regression test.
 - **Hosted database TLS:** asyncpg mode strings expected a private root-certificate file. A shared connection helper now supplies the system trust context for API, migration, and seed connections while retaining certificate and hostname checks.
 - **Initial dashboard requests:** hosted browser traces revealed two sequential requests for the same default range. Reusing the overview reduces those initial dashboard requests from two to one; a component test guards the request count. No latency benchmark is claimed.
+- **Forecast navigation:** a hosted browser check caught a linked facility ID enabling submission before its select option loaded. Native form validation then blocked the request. Submission now waits for the selected inventory entry; a deferred-response regression reproduces the original failure and verifies the fix.
 - **Container portability:** Podman required explicit `docker.io/library/` registry names. The manifests now use qualified names, which also work with Docker.
 
 ## Refactoring opportunities without claimed benchmarks

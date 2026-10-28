@@ -38,6 +38,9 @@ export function ForecastPage() {
     queryFn: ({ signal }) => api.facilities("", "", signal),
   });
   const facility = selected || sites.data?.[0]?.id || "";
+  // A linked ID can arrive before its select option; wait for inventory so native
+  // form validation cannot silently reject an apparently enabled calculation.
+  const facilityAvailable = !!sites.data?.some((site) => site.id === facility);
   // A mutation represents an explicit calculation request, avoiding unexpected reruns while editing settings.
   const calculation = useMutation({
     mutationFn: () =>
@@ -147,7 +150,7 @@ export function ForecastPage() {
           )}
           <button
             className={s.button}
-            disabled={!facility || calculation.isPending}
+            disabled={!facilityAvailable || calculation.isPending}
           >
             <Play size={16} />
             {calculation.isPending ? "Calculating…" : "Generate forecast"}

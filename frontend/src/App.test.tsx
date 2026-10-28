@@ -257,6 +257,36 @@ describe("Operations interface with mocked API transport", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("waits for a linked forecast facility to load before enabling submission", async () => {
+    const transport = fetch;
+    let releaseFacilities!: () => void;
+    const facilitiesReady = new Promise<void>((resolve) => {
+      releaseFacilities = resolve;
+    });
+    // A facility link supplies its ID before the select options arrive on a slow connection.
+    vi.stubGlobal(
+      "fetch",
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input).includes("/facilities?")) await facilitiesReady;
+        return transport(input, init);
+      },
+    );
+    renderApp("/app/forecasts?facility=site-a");
+    const generate = await screen.findByRole("button", {
+      name: "Generate forecast",
+    });
+    expect(generate).toBeDisabled();
+    await userEvent.click(generate);
+    expect(calls.some((call) => call.path.includes("/site-a/forecast"))).toBe(
+      false,
+    );
+
+    releaseFacilities();
+    await waitFor(() => expect(generate).toBeEnabled());
+    await userEvent.click(generate);
+    expect(await screen.findByText("31.2")).toBeInTheDocument();
+  });
+
   it("requests resolved incidents without exposing write controls to the demo", async () => {
     renderApp("/app/incidents");
     await screen.findByText("Demand excursion");

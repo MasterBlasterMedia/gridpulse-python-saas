@@ -12,8 +12,8 @@ Measured on **2026-10-27**, with frontend regression checks repeated on **2026-1
 | Operations service | **98%** line coverage |
 | Ruff check and format | Pass |
 | Mypy strict mode on `app/` | Pass, 15 source modules |
-| React / Vitest / Testing Library | **13 passed** |
-| Frontend coverage | **65.14% statements / 65.68% lines**; no 80% frontend claim |
+| React / Vitest / Testing Library | **14 passed** |
+| Frontend coverage | **65.38% statements / 65.80% lines**; no 80% frontend claim |
 | TypeScript and ESLint | Pass |
 | Production React build | Pass, Vite 8.3.5 |
 | Playwright real API smoke | **4 passed**, desktop and mobile |
@@ -39,6 +39,7 @@ The later GitHub CI run and live deployment checks are recorded in [deployment.m
 - Public demo tests verify failed facility/incident writes, failed forecast persistence, denied audit access, and successful nonpersistent calculations with unchanged audit/run tables.
 - Mutations are checked for persisted state, duplicate conflicts, forward incident transitions, and atomic audit records. Invalid authentication never reveals whether an email exists or echoes passwords.
 - Frontend tests mock only the transport: the real pages, session provider, query cache, controls, and routing handle loading, errors, empty search, date validation, comparison, forecast inputs, role visibility, and authentication failures.
+- A deferred inventory response proves a linked forecast cannot be submitted before its facility option loads. The regression failed against the original enabled-button state and passed after the loading guard was added.
 - Browser smoke tests use the running API and database, exercise both 1440px desktop and mobile layouts, assert no horizontal overflow, navigate facilities, change anomaly thresholds, calculate a forecast, and download CSV.
 
 ## Reproduce the database tests
