@@ -140,6 +140,9 @@ describe("Operations interface with mocked API transport", () => {
     renderApp();
     await screen.findByText("Monitored facilities");
     expect(screen.getByText("21.6")).toBeInTheDocument();
+    expect(
+      calls.filter((call) => call.path.includes("/dashboard")),
+    ).toHaveLength(1);
     await userEvent.selectOptions(
       screen.getByRole("combobox", { name: "Facility" }),
       "site-a",

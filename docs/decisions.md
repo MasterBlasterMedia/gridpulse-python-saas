@@ -19,6 +19,8 @@
 - **Frontend bundle:** an eager import brought charting code into the public landing page. Route-level imports defer that dependency. The measured build comparison is in [testing.md](testing.md); it measures bytes, not fabricated load-time improvements.
 - **Coverage:** SQLAlchemy's async adapter uses greenlets. The first coverage configuration missed resumed coroutine lines despite passing assertions. Declaring `greenlet` and `thread` execution contexts corrected measurement. This is a measurement repair, not an increase in tested behavior. [Coverage configuration reference](https://coverage.readthedocs.io/en/latest/config.html#run-concurrency).
 - **One-day anomaly views:** a selected period cannot supply its own prior 24-hour baseline at its beginning. Queries now warm up the detector with prior data, filter flags back to the requested period, and include a regression test.
+- **Hosted database TLS:** asyncpg mode strings expected a private root-certificate file. A shared connection helper now supplies the system trust context for API, migration, and seed connections while retaining certificate and hostname checks.
+- **Initial dashboard requests:** hosted browser traces revealed two sequential requests for the same default range. Reusing the overview reduces those initial dashboard requests from two to one; a component test guards the request count. No latency benchmark is claimed.
 - **Container portability:** Podman required explicit `docker.io/library/` registry names. The manifests now use qualified names, which also work with Docker.
 
 ## Refactoring opportunities without claimed benchmarks

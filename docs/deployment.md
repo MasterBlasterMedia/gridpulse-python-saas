@@ -3,14 +3,16 @@
 ## Current verification status
 
 - Public repository: https://github.com/MasterBlasterMedia/gridpulse-python-saas
-- Frontend target: GitHub Pages at `https://masterblastermedia.github.io/gridpulse-python-saas/` (publication pending verification).
+- Frontend: https://masterblastermedia.github.io/gridpulse-python-saas/ — live and connected to the external API, verified **2026-10-28**.
+- Demo workspace: https://masterblastermedia.github.io/gridpulse-python-saas/#/app
+- [Successful initial Pages deployment and all CI jobs](https://github.com/MasterBlasterMedia/gridpulse-python-saas/actions/runs/40674550052).
 - API: https://gridpulse-api-2nux.onrender.com — live HTTPS checks passed on **2026-10-28**.
 - Swagger: https://gridpulse-api-2nux.onrender.com/docs
 - Hosting: Render Free Docker service in Ohio; isolated Neon Free PostgreSQL 18 project in AWS US East (Ohio).
 - Verified API revision: `2e5be1a4a2811b33b29b24b66b667ea00a2cb5b7`; [all five CI checks passed](https://github.com/MasterBlasterMedia/gridpulse-python-saas/actions/runs/40592734630).
 - AWS: Terraform validated; **not provisioned** and no billable AWS deployment authorized.
 
-The API acceptance checks confirmed readiness, Swagger/OpenAPI, 12 facilities, database-derived dashboard metrics, facility filtering, both forecasting algorithms, anomalies, CSV export, and four active incidents. Unauthenticated access returned 401; demo mutation, forecast persistence, and audit access returned 403. CORS admitted only the configured Pages origin. Frontend publication is being verified separately.
+The API acceptance checks confirmed readiness, Swagger/OpenAPI, 12 facilities, database-derived dashboard metrics, facility filtering, both forecasting algorithms, anomalies, CSV export, and four active incidents. Unauthenticated access returned 401; demo mutation, forecast persistence, and audit access returned 403. CORS admitted only the configured Pages origin. The published browser client loaded database-derived metrics through the external HTTPS API. Desktop and mobile browser checks completed filtering, facility details, forecasting, CSV download, and navigation.
 
 Render auto-deploy is disabled. For API changes, wait for a successful CI run on the intended revision, then use Render **Manual Deploy → Deploy a specific commit**. The optional CI deploy hook is provided but not enabled; no Render deploy credential is stored in GitHub.
 

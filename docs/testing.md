@@ -1,6 +1,6 @@
 # Verification record
 
-Measured on **2026-10-27**, using Python 3.12.14, Node 24.22.1, PostgreSQL 18.6, and the committed lockfiles. This record separates executed checks from configuration or proposed infrastructure.
+Measured on **2026-10-27**, with frontend regression checks repeated on **2026-10-28**, using Python 3.12.14, Node 24.22.1, PostgreSQL 18.6, and the committed lockfiles. This record separates executed checks from configuration or proposed infrastructure.
 
 ## Executed checks
 
@@ -13,10 +13,11 @@ Measured on **2026-10-27**, using Python 3.12.14, Node 24.22.1, PostgreSQL 18.6,
 | Ruff check and format | Pass |
 | Mypy strict mode on `app/` | Pass, 15 source modules |
 | React / Vitest / Testing Library | **13 passed** |
-| Frontend coverage | **65.01% statements / 65.55% lines**; no 80% frontend claim |
+| Frontend coverage | **65.14% statements / 65.68% lines**; no 80% frontend claim |
 | TypeScript and ESLint | Pass |
 | Production React build | Pass, Vite 8.3.5 |
 | Playwright real API smoke | **4 passed**, desktop and mobile |
+| Published Pages + Render smoke | **4 passed**, desktop and mobile, verified 2026-10-28 |
 | Python pinned dependency audit | No known vulnerabilities reported |
 | npm audit | No known vulnerabilities reported |
 | Alembic upgrade and model drift | Applied successfully; no new upgrade operations |
@@ -64,6 +65,12 @@ The initial eager application imported Recharts through every analytical page. L
 **54.95% fewer uncompressed entry bytes.** Both measurements used the same installed dependency set, Vite 8.3.5 production builds, and Linux/Node 24. The recorded after build also included small visual correctness edits, so this is an observed before/after build comparison rather than an isolated laboratory benchmark. Later small source changes can alter hashes and byte counts.
 
 Chart code is deferred, not removed. The first analytical view downloads an additional chart chunk (~371 KB before gzip), and total application code is not reduced by the same percentage. No claim is made about measured startup latency, Web Vitals, API throughput, or real-world forecasting accuracy.
+
+## Initial dashboard request refactor
+
+The first hosted browser trace showed two sequential dashboard requests for the default seven-day selection: an overview request followed by the same range with explicit dates. The default view now reuses the overview response; changed filters still request their selected scope. The component regression assertion verifies one initial dashboard request instead of two. This is a request-count reduction, not a measured latency guarantee.
+
+Hosted Playwright runs allow 90 seconds for assertions and 120 seconds per test to accommodate free-tier startup and CPU limits. Local/container CI retains 5-second assertions and a 30-second test budget.
 
 ## Boundaries not covered by this result
 

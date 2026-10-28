@@ -6,7 +6,9 @@ Every operational value is computed from stored synthetic data. This is educatio
 
 [Repository](https://github.com/MasterBlasterMedia/gridpulse-python-saas) · [Architecture](docs/architecture.md) · [Engineering decisions](docs/decisions.md) · [Testing](docs/testing.md) · [Deployment status](docs/deployment.md)
 
-**Live API:** [Swagger documentation](https://gridpulse-api-2nux.onrender.com/docs). Frontend publication is being verified; see [the deployment record](docs/deployment.md).
+**[Live website](https://masterblastermedia.github.io/gridpulse-python-saas/) · [Open the demo](https://masterblastermedia.github.io/gridpulse-python-saas/#/app) · [API documentation](https://gridpulse-api-2nux.onrender.com/docs)**
+
+Verified on **2026-10-28** using GitHub Pages, Render Free, and Neon Free. The API can take 50 seconds or longer to wake after inactivity. See [deployment verification and maintenance](docs/deployment.md).
 
 ![GridPulse operations dashboard](docs/screenshots/dashboard-desktop.png)
 

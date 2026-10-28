@@ -53,16 +53,19 @@ export function DashboardPage() {
   const invalidRange =
     days === "custom" &&
     (!customStart || !customEnd || customStart >= customEnd);
+  // The overview already covers the default seven days; reuse it instead of making
+  // a second sequential request for identical data on a cold or CPU-limited host.
+  const usesOverview = !facility && days === "7";
   const query = useQuery({
     queryKey: ["dashboard", params],
     queryFn: ({ signal }) => api.dashboard(params, signal),
-    enabled: !!base.data && !invalidRange,
+    enabled: !!base.data && !invalidRange && !usesOverview,
   });
   const incidents = useQuery({
     queryKey: ["incidents", false],
     queryFn: ({ signal }) => api.incidents(false, signal),
   });
-  const data = query.data;
+  const data = usesOverview ? base.data : query.data;
   return (
     <>
       <PageHeading
@@ -142,7 +145,7 @@ export function DashboardPage() {
       )}
       {base.error ? (
         <ErrorState error={base.error} retry={() => void base.refetch()} />
-      ) : query.error ? (
+      ) : !usesOverview && query.error ? (
         <ErrorState error={query.error} retry={() => void query.refetch()} />
       ) : !data ? (
         <Loading />
