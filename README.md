@@ -6,7 +6,7 @@ Every operational value is computed from stored synthetic data. This is educatio
 
 [Repository](https://github.com/MasterBlasterMedia/gridpulse-python-saas) · [Architecture](docs/architecture.md) · [Engineering decisions](docs/decisions.md) · [Testing](docs/testing.md) · [Deployment status](docs/deployment.md)
 
-**Public deployment:** being verified. Verified website and API URLs are recorded in [the deployment record](docs/deployment.md); configuration alone is not evidence of successful hosting.
+**Live API:** [Swagger documentation](https://gridpulse-api-2nux.onrender.com/docs). Frontend publication is being verified; see [the deployment record](docs/deployment.md).
 
 ![GridPulse operations dashboard](docs/screenshots/dashboard-desktop.png)
 

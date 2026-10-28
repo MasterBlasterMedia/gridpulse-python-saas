@@ -4,17 +4,22 @@
 
 - Public repository: https://github.com/MasterBlasterMedia/gridpulse-python-saas
 - Frontend target: GitHub Pages at `https://masterblastermedia.github.io/gridpulse-python-saas/` (publication pending verification).
-- API target: free Render Docker web service, with a separate Neon Free PostgreSQL project (publication pending verification).
+- API: https://gridpulse-api-2nux.onrender.com — live HTTPS checks passed on **2026-10-28**.
+- Swagger: https://gridpulse-api-2nux.onrender.com/docs
+- Hosting: Render Free Docker service in Ohio; isolated Neon Free PostgreSQL 18 project in AWS US East (Ohio).
+- Verified API revision: `2e5be1a4a2811b33b29b24b66b667ea00a2cb5b7`; [all five CI checks passed](https://github.com/MasterBlasterMedia/gridpulse-python-saas/actions/runs/40592734630).
 - AWS: Terraform validated; **not provisioned** and no billable AWS deployment authorized.
 
-This section will be updated with the actual deployment URLs and successful CI/live checks. Planned URLs are not presented as verified deployments.
+The API acceptance checks confirmed readiness, Swagger/OpenAPI, 12 facilities, database-derived dashboard metrics, facility filtering, both forecasting algorithms, anomalies, CSV export, and four active incidents. Unauthenticated access returned 401; demo mutation, forecast persistence, and audit access returned 403. CORS admitted only the configured Pages origin. Frontend publication is being verified separately.
+
+Render auto-deploy is disabled. For API changes, wait for a successful CI run on the intended revision, then use Render **Manual Deploy → Deploy a specific commit**. The optional CI deploy hook is provided but not enabled; no Render deploy credential is stored in GitHub.
 
 ## Free demonstration deployment
 
 1. Create a separate Neon **Free** project for synthetic GridPulse data. Use PostgreSQL 17 or 18. Do not reuse a customer database.
 2. Create a Render web service from the public repository, choose **Docker** and explicitly select the **$0** compute tier (Render may default to a paid tier).
 3. Set root directory to `backend`, Dockerfile to `Dockerfile`, build context to `.`, and health check path to `/health/ready`. Use the Ohio region to match the demonstration database.
-4. Store the connection URL in Render's encrypted `DATABASE_URL` environment value. Provider `postgresql://` URLs are normalized to asyncpg. `sslmode=require` is converted to certificate/hostname verification; credentials are never committed.
+4. Store the connection URL in Render's encrypted `DATABASE_URL` environment value. Provider `postgresql://` URLs are normalized to asyncpg. `sslmode=require` is converted to certificate/hostname verification using an explicit SSL context and the system trust store. Check that copying the displayed URL did not introduce whitespace. Credentials are never committed.
 5. Generate a random `JWT_SECRET` of at least 32 characters in the secret store. Set `ENVIRONMENT=production`, `CORS_ORIGINS=["https://masterblastermedia.github.io"]`, `RUN_MIGRATIONS=true`, `SEED_DEMO=true`, and `PORT=8000`.
 6. Keep one worker. The free single-instance startup applies migrations and the idempotent demo seed before serving. Disable provider auto-deploy unless it is gated by the repository's successful checks; a secret deploy hook can trigger releases from CI.
 7. Once API readiness, `/docs`, demo identity, and forecast requests succeed, set the GitHub Actions repository variable `VITE_API_URL` to the actual HTTPS API origin.
