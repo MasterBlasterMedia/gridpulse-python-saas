@@ -1,5 +1,5 @@
 # Keep dependency installation cached while source changes; the final process has no root privileges.
-FROM docker.io/library/python:3.12-slim AS base
+FROM docker.io/library/python:3.15-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
 COPY requirements.lock ./
